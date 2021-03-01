@@ -1,5 +1,6 @@
 package com.altimetrik.app.payment.resource.rest;
 
+import com.altimetrik.app.exceptions.ResourceNotFoundException;
 import com.altimetrik.app.payment.Payment;
 import com.altimetrik.app.payment.PaymentService;
 import com.altimetrik.app.payment.resource.PaymentDto;
@@ -7,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 
@@ -17,6 +20,14 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class PaymentResource {
     private final PaymentService paymentService;
+
+    @GetMapping("/payments/{id}")
+    public PaymentDto getPayment(@PathVariable Integer id) {
+        return paymentService.get(id)
+                .map(this::toDto)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(format("payment not found for id = %s", id)));
+    }
 
     @GetMapping("/payments")
     public List<PaymentDto> getPayments() {
@@ -26,7 +37,7 @@ public class PaymentResource {
     }
 
     @PostMapping("/payments")
-    public void create(@RequestBody PaymentDto paymentDto) {
+    public void create(@Valid @RequestBody PaymentDto paymentDto) {
         paymentService.addPayment(new PaymentAdapter(paymentDto));
     }
 

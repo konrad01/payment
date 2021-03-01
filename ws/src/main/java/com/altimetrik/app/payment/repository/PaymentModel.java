@@ -1,4 +1,4 @@
-package com.altimetrik.app.payment;
+package com.altimetrik.app.payment.repository;
 
 import com.opencsv.bean.CsvBindByPosition;
 import lombok.Data;

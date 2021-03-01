@@ -14,6 +14,8 @@
 
     <properties>
         <spring-boot.version>2.4.2</spring-boot.version>
+        <hibernate.version>5.2.2.Final</hibernate.version>
+        <opencsv.version>5.3</opencsv.version>
         <java.version>11</java.version>
         <maven.compile.source>11</maven.compile.source>
         <maven.compile.target>11</maven.compile.target>
@@ -22,9 +24,25 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.altirmetik.app.payment</groupId>
+            <artifactId>payment-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <!--        SPRING BOOT-->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -32,14 +50,20 @@
             <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.altirmetik.app.payment</groupId>
-            <artifactId>payment-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>5.3</version>
+            <version>${opencsv.version}</version>
+        </dependency>
+        <!--        VALIDATION-->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
     </dependencies>
