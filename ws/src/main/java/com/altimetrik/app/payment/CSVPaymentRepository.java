@@ -1,9 +1,8 @@
-package com.altimetrik.app.payment.repository;
+package com.altimetrik.app.payment;
 
-import com.altimetrik.app.payment.Payment;
-import com.altimetrik.app.payment.PaymentRepository;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,20 +15,22 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
+import static java.util.Objects.isNull;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
 class CSVPaymentRepository implements PaymentRepository {
 
     private final Path repositoryPath;
 
     @Override
-    public Optional<Payment> findById(int id) {
+    public Optional<Payment> findById(String id) {
         return find(id).map(PaymentAdapter::new);
     }
 
@@ -41,18 +42,29 @@ class CSVPaymentRepository implements PaymentRepository {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(String id) {
         remove(id);
     }
 
     @Override
-    public void save(Payment payment) {
-        persist(payment);
+    public String save(Payment payment) {
+        PaymentModel model = toModel(payment);
+        String id = UUID.randomUUID().toString();
+        model.setId(id);
+        persist(model);
+
+        return id;
     }
 
-    private void persist(Payment payment) {
-        List<PaymentModel> payments = fetchAll();
+    @Override
+    public void update(String id, Payment payment) {
         PaymentModel model = toModel(payment);
+        model.setId(id);
+        persist(model);
+    }
+
+    private void persist(PaymentModel model) {
+        List<PaymentModel> payments = fetchAll();
         OptionalInt index = checkIfExists(model.getId(), payments);
         if (index.isPresent()) {
             payments.set(index.getAsInt(), model);
@@ -62,7 +74,7 @@ class CSVPaymentRepository implements PaymentRepository {
         write(payments);
     }
 
-    private void remove(int id) {
+    private void remove(String id) {
         List<PaymentModel> payments = fetchAll();
         checkIfExists(id, payments).ifPresent(index -> {
             payments.remove(index);
@@ -71,16 +83,22 @@ class CSVPaymentRepository implements PaymentRepository {
 
     }
 
-    private Optional<PaymentModel> find(int id) {
+    private Optional<PaymentModel> find(String id) {
+        if (isNull(id)) {
+            return empty();
+        }
         List<PaymentModel> payments = fetchAll();
         OptionalInt index = checkIfExists(id, fetchAll());
-        if(index.isPresent()){
+        if (index.isPresent()) {
             return of(payments.get(index.getAsInt()));
         }
         return empty();
     }
 
-    private OptionalInt checkIfExists(Integer id, List<PaymentModel> payments) {
+    private OptionalInt checkIfExists(String id, List<PaymentModel> payments) {
+        if (isNull(id)) {
+            return OptionalInt.empty();
+        }
         return IntStream.range(0, payments.size())
                 .filter(i -> id.equals(payments.get(i).getId()))
                 .findFirst();
@@ -130,7 +148,7 @@ class CSVPaymentRepository implements PaymentRepository {
         }
 
         @Override
-        public Integer getId() {
+        public String getId() {
             return model.getId();
         }
 

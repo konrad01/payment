@@ -3,7 +3,7 @@ package com.altimetrik.app.payment;
 import java.math.BigDecimal;
 
 public interface Payment {
-    Integer getId();
+    String getId();
 
     BigDecimal getAmount();
 

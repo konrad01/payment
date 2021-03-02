@@ -1,12 +1,12 @@
-package com.altimetrik.app.exceptions;
+package com.altimetrik.app.payment.rest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ResourceNotFoundException extends RuntimeException {
+class ResourceNotFoundException extends RuntimeException {
 
-    public ResourceNotFoundException(String message) {
+    ResourceNotFoundException(String message) {
         super(message);
     }
 }

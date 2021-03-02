@@ -16,6 +16,9 @@
         <maven.compile.target>11</maven.compile.target>
         <jdk.version>11</jdk.version>
         <lombok.version>1.18.16</lombok.version>
+        <mockito.version>3.6.28</mockito.version>
+        <assertj.version>3.17.2</assertj.version>
+        <junit.version>5.7.0</junit.version>
     </properties>
     <modules>
         <module>core</module>

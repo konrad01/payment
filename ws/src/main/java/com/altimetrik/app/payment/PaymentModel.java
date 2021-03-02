@@ -1,4 +1,4 @@
-package com.altimetrik.app.payment.repository;
+package com.altimetrik.app.payment;
 
 import com.opencsv.bean.CsvBindByPosition;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class PaymentModel {
 
     @CsvBindByPosition(position = 0)
-    private Integer id;
+    private String id;
     @CsvBindByPosition(position = 1)
     private BigDecimal amount;
     @CsvBindByPosition(position = 2)

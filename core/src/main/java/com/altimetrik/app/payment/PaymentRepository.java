@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PaymentRepository {
-    Optional<Payment> findById(int id);
+    Optional<Payment> findById(String id);
 
     List<Payment> findAll();
 
-    void delete(int id);
+    void delete(String id);
 
-    void save(Payment payment);
+    String save(Payment payment);
+
+    void update(String id, Payment payment);
 
 }

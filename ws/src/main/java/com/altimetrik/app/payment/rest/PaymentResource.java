@@ -1,14 +1,11 @@
-package com.altimetrik.app.payment.resource.rest;
+package com.altimetrik.app.payment.rest;
 
-import com.altimetrik.app.exceptions.ResourceNotFoundException;
 import com.altimetrik.app.payment.Payment;
 import com.altimetrik.app.payment.PaymentService;
-import com.altimetrik.app.payment.resource.PaymentDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -17,12 +14,12 @@ import static java.util.stream.Collectors.toList;
 
 
 @RestController
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class PaymentResource {
     private final PaymentService paymentService;
 
     @GetMapping("/payments/{id}")
-    public PaymentDto getPayment(@PathVariable Integer id) {
+    public PaymentDto getPayment(@PathVariable String id) {
         return paymentService.get(id)
                 .map(this::toDto)
                 .orElseThrow(
@@ -37,18 +34,24 @@ public class PaymentResource {
     }
 
     @PostMapping("/payments")
-    public void create(@Valid @RequestBody PaymentDto paymentDto) {
-        paymentService.addPayment(new PaymentAdapter(paymentDto));
+    public MessageResponse create(@RequestBody PaymentForm form) {
+        String id = paymentService.addPayment(new PaymentAdapter(form));
+
+        return MessageResponse.ok(id);
     }
 
-    @PutMapping("/payments")
-    public void update(@RequestBody PaymentDto paymentDto) {
-        paymentService.updatePayment(new PaymentAdapter(paymentDto));
+    @PutMapping("/payments/{id}")
+    public HttpStatus update(@PathVariable String id, @RequestBody PaymentForm form) {
+        paymentService.update(id, new PaymentAdapter(form));
+
+        return HttpStatus.OK;
     }
 
     @DeleteMapping("/payments/{id}")
-    public void delete(@PathVariable Integer id) {
+    public HttpStatus delete(@PathVariable String id) {
         paymentService.remove(id);
+
+        return HttpStatus.OK;
     }
 
     private PaymentDto toDto(Payment payment) {
@@ -64,31 +67,31 @@ public class PaymentResource {
 
     @RequiredArgsConstructor
     private static class PaymentAdapter implements Payment {
-        private final PaymentDto dto;
+        private final PaymentForm form;
 
         @Override
-        public Integer getId() {
-            return dto.getId();
+        public String getId() {
+            return null;
         }
 
         @Override
         public BigDecimal getAmount() {
-            return dto.getAmount();
+            return form.getAmount();
         }
 
         @Override
         public String getCurrency() {
-            return dto.getCurrency();
+            return form.getCurrency();
         }
 
         @Override
         public Integer getUserId() {
-            return dto.getUserId();
+            return form.getUserId();
         }
 
         @Override
         public String getBankAccountNumber() {
-            return dto.getBankAccountNumber();
+            return form.getBankAccountNumber();
         }
     }
 }

@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PaymentService {
-    Optional<Payment> get(int id);
+    Optional<Payment> get(String id);
 
     List<Payment> findAll();
 
-    void addPayment(Payment payment);
+    String addPayment(Payment payment);
 
-    void remove(int id);
+    void remove(String id);
 
-    void updatePayment(Payment payment);
+    void update(String id, Payment payment);
 
 
 }

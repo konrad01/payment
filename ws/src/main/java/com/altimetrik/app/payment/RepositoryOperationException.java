@@ -1,4 +1,4 @@
-package com.altimetrik.app.payment.repository;
+package com.altimetrik.app.payment;
 
 class RepositoryOperationException extends RuntimeException{
     RepositoryOperationException(String message, Throwable cause) {
